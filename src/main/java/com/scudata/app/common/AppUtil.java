@@ -43,6 +43,7 @@ import com.scudata.common.Types;
 import com.scudata.common.UUID;
 import com.scudata.dm.ComputeStack;
 import com.scudata.dm.Context;
+import com.scudata.dm.DataStruct;
 import com.scudata.dm.Env;
 import com.scudata.dm.FileObject;
 import com.scudata.dm.JobSpace;
@@ -51,6 +52,7 @@ import com.scudata.dm.KeyWord;
 import com.scudata.dm.Param;
 import com.scudata.dm.ParamList;
 import com.scudata.dm.Sequence;
+import com.scudata.dm.Table;
 import com.scudata.dm.cursor.ICursor;
 import com.scudata.dm.query.SimpleSQL;
 import com.scudata.expression.fn.Eval;
@@ -256,7 +258,14 @@ public class AppUtil {
 			}
 			stack.pushArg(argSeq);
 			SimpleSQL lq = new SimpleSQL(sql, args, ctx);
-			return lq.execute();
+			Object result = lq.execute();
+			if (result == null) {
+				DataStruct ds = lq.getDataStruct();
+				if (ds != null) {
+					result = new Table(ds);
+				}
+			}
+			return result;
 		} finally {
 			stack.popArg();
 		}
