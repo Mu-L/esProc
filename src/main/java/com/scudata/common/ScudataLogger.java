@@ -181,6 +181,7 @@ public class ScudataLogger {
 	 */
 	public static void addFileHandler(FileHandler fh) {
 		logger.handlers.add(fh);
+//		new Exception("产生文件日志："+fh).printStackTrace();
 	}
 
 	/**
@@ -689,7 +690,8 @@ public class ScudataLogger {
 		}
 
 		public String toString() {
-			return fileName+","+getLevelName(logLevel)+","+maxFileSize/(1024*1024)+"M";
+			return fileName+","+getLevelName(logLevel)+","+maxFileSize/(1024*1024)+"M"
+					+",bufferSize:"+bufferSize;
 		}
 		
 	}
