@@ -303,7 +303,7 @@ public class ResultSetMetaData implements java.sql.ResultSetMetaData,
 		} else if (type == ResultSet.GET_EMPTY_RESULT) {
 			colCount = 1;
 			columnNames = new ArrayList<Object>(colCount);
-			columnNames.add("UNSUPPORTED");
+			columnNames.add("NORESULT");
 
 			columnTypes = new int[colCount];
 			columnTypes[0] = java.sql.Types.VARCHAR;
