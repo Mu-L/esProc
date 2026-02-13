@@ -98,8 +98,8 @@ class Join extends Relation {
 		String leftFilter = null;
 		String rightFilter = null;
 		boolean isJoin = true;
-		ArrayList<Expression> leftExpList = new ArrayList<Expression>();
-		ArrayList<Expression> rightExpList = new ArrayList<Expression>();
+		ArrayList<Exp> leftExpList = new ArrayList<Exp>();
+		ArrayList<Exp> rightExpList = new ArrayList<Exp>();
 		String xjoinFilter = null;
 		
 		for (int i = andList.size() - 1; i >= 0; --i) {
@@ -185,8 +185,12 @@ class Join extends Relation {
 			int fcount = leftExpList.size();
 			Expression []exps1 = new Expression[fcount];
 			Expression []exps2 = new Expression[fcount];
-			leftExpList.toArray(exps1);
-			rightExpList.toArray(exps2);
+			
+			for (int f = 0; f < fcount; ++f) {
+				exps1[f] = new Expression(cellSet, ctx, leftExpList.get(f).toSPL());
+				exps2[f] = new Expression(cellSet, ctx, rightExpList.get(f).toSPL());
+			}
+			
 			Expression [][]totalExps = new Expression[][] {exps1, exps2};
 			result = Sequence.join(sequences, totalExps, names, null, ctx);
 		} else {
@@ -264,8 +268,12 @@ class Join extends Relation {
 				int fcount = leftExpList.size();
 				Expression []exps1 = new Expression[fcount];
 				Expression []exps2 = new Expression[fcount];
-				leftExpList.toArray(exps1);
-				rightExpList.toArray(exps2);
+
+				for (int f = 0; f < fcount; ++f) {
+					exps1[f] = new Expression(cellSet, ctx, leftExpList.get(f).toSPL());
+					exps2[f] = new Expression(cellSet, ctx, rightExpList.get(f).toSPL());
+				}
+
 				Expression [][]totalExps = new Expression[][] {exps1, exps2};
 				result = Sequence.join(sequences, totalExps, names, null, ctx);
 			} else {
@@ -310,8 +318,8 @@ class Join extends Relation {
 		String leftFilter = null;
 		String rightFilter = null;
 		boolean isJoin = true;
-		ArrayList<Expression> leftExpList = new ArrayList<Expression>();
-		ArrayList<Expression> rightExpList = new ArrayList<Expression>();
+		ArrayList<Exp> leftExpList = new ArrayList<Exp>();
+		ArrayList<Exp> rightExpList = new ArrayList<Exp>();
 		String xjoinFilter = null;
 		
 		for (int i = andList.size() - 1; i >= 0; --i) {
@@ -418,8 +426,12 @@ class Join extends Relation {
 		if (isJoin && fcount > 0) {
 			Expression []exps1 = new Expression[fcount];
 			Expression []exps2 = new Expression[fcount];
-			leftExpList.toArray(exps1);
-			rightExpList.toArray(exps2);
+			
+			for (int f = 0; f < fcount; ++f) {
+				exps1[f] = new Expression(cellSet, ctx, leftExpList.get(f).toSPL());
+				exps2[f] = new Expression(cellSet, ctx, rightExpList.get(f).toSPL());
+			}
+			
 			Expression [][]totalExps = new Expression[][] {exps1, exps2};
 			result = Sequence.join(sequences, totalExps, names, option, ctx);
 		} else {

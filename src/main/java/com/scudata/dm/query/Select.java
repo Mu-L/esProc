@@ -126,13 +126,13 @@ public class Select extends QueryBody {
 		
 		// 拆分关连表达式
 		public boolean splitJionExp(QueryBody leftTable, QueryBody rightTable, 
-				List<Expression> leftExpList, List<Expression> rightExpList) {
+				List<Exp> leftExpList, List<Exp> rightExpList) {
 			return false;
 		}
 		
 		// 拆分关连表达式
 		public boolean splitJionExp(List<QueryBody> tableList, int lastTable, 
-				List<Expression> leftExpList, List<Expression> rightExpList) {
+				List<Exp> leftExpList, List<Exp> rightExpList) {
 			return false;
 		}
 	}
@@ -1047,8 +1047,17 @@ public class Select extends QueryBody {
 			return spl;
 		}
 		
+		public Exp getSubExp(int start, int next) {
+			if (start + 1 == next) {
+				return exps.get(start);
+			} else {
+				List<Exp> subList = exps.subList(start, next);
+				return new LogicExp(subList);
+			}
+		}
+		
 		public boolean splitJionExp(QueryBody leftTable, QueryBody rightTable, 
-				List<Expression> leftExpList, List<Expression> rightExpList) {
+				List<Exp> leftExpList, List<Exp> rightExpList) {
 			int size = exps.size();
 			int equalIndex = -1;
 			List<FieldNode> fieldList1 = new ArrayList<FieldNode>();
@@ -1087,12 +1096,8 @@ public class Select extends QueryBody {
 				}
 			}
 			
-			Context ctx = getContext();
-			ICellSet cellSet = getCellSet();
-			String spl = toSPL(0, equalIndex);
-			Expression exp1 = new Expression(cellSet, ctx, spl);
-			spl = toSPL(equalIndex + 1, size);
-			Expression exp2 = new Expression(cellSet, ctx, spl);
+			Exp exp1 = getSubExp(0, equalIndex);
+			Exp exp2 = getSubExp(equalIndex + 1, size);
 			
 			if (table1 == leftTable) {
 				leftExpList.add(exp1);
@@ -1106,7 +1111,7 @@ public class Select extends QueryBody {
 		}
 		
 		public boolean splitJionExp(List<QueryBody> tableList, int lastTable, 
-				List<Expression> leftExpList, List<Expression> rightExpList) {
+				List<Exp> leftExpList, List<Exp> rightExpList) {
 			int size = exps.size();
 			int equalIndex = -1;
 			List<FieldNode> fieldList1 = new ArrayList<FieldNode>();
@@ -1127,8 +1132,6 @@ public class Select extends QueryBody {
 				return false;
 			}
 			
-			Context ctx = getContext();
-			ICellSet cellSet = getCellSet();
 			QueryBody rightTable = tableList.get(lastTable);
 			
 			if (fieldList1.get(0).getTable() == rightTable) {
@@ -1144,10 +1147,8 @@ public class Select extends QueryBody {
 					}
 				}
 				
-				String spl = toSPL(0, equalIndex);
-				Expression exp1 = new Expression(cellSet, ctx, spl);
-				spl = toSPL(equalIndex + 1, size);
-				Expression exp2 = new Expression(cellSet, ctx, spl);
+				Exp exp1 = getSubExp(0, equalIndex);
+				Exp exp2 = getSubExp(equalIndex + 1, size);
 				leftExpList.add(exp2);
 				rightExpList.add(exp1);
 				return true;
@@ -1164,10 +1165,8 @@ public class Select extends QueryBody {
 					}
 				}
 				
-				String spl = toSPL(0, equalIndex);
-				Expression exp1 = new Expression(cellSet, ctx, spl);
-				spl = toSPL(equalIndex + 1, size);
-				Expression exp2 = new Expression(cellSet, ctx, spl);
+				Exp exp1 = getSubExp(0, equalIndex);
+				Exp exp2 = getSubExp(equalIndex + 1, size);
 				leftExpList.add(exp1);
 				rightExpList.add(exp2);
 				return true;
@@ -1245,12 +1244,12 @@ public class Select extends QueryBody {
 		}
 		
 		public boolean splitJionExp(QueryBody leftTable, QueryBody rightTable, 
-				List<Expression> leftExpList, List<Expression> rightExpList) {
+				List<Exp> leftExpList, List<Exp> rightExpList) {
 			return exp.splitJionExp(leftTable, rightTable, leftExpList, rightExpList);
 		}
 		
 		public boolean splitJionExp(List<QueryBody> tableList, int lastTable, 
-				List<Expression> leftExpList, List<Expression> rightExpList) {
+				List<Exp> leftExpList, List<Exp> rightExpList) {
 			return exp.splitJionExp(tableList, lastTable, leftExpList, rightExpList);
 		}
 	}
