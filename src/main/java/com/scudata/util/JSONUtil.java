@@ -345,9 +345,92 @@ public final class JSONUtil {
 				s = s.substring(1, match);
 			}
 			
+			if (s.length()>=10){ //GZIP header
+				String val = completeUnescape(s);
+				byte b1 = (byte) (val.charAt(0) & 0xFF);
+				byte b2 = (byte) (val.charAt(1) & 0xFF);
+				
+				if ((b1 & 0xFF) == 0x1F && (b2 & 0xFF) == 0x8B) {
+					return s;
+				}
+			}
+			
 			return StringUtils.unicode(s);
 		}
 		
 		return Variant.parse(s, true);
 	}
+	
+	public static String completeUnescape(String str) {
+        StringBuilder sb = new StringBuilder(str.length());
+        int i = 0;
+        int len = str.length();
+        
+        while (i < len) {
+            char c = str.charAt(i);
+            if (c == '\\') {
+                if (i + 1 < len) {
+                    char next = str.charAt(i + 1);
+                    switch (next) {
+                        case 'u':
+                            if (i + 5 <= len) {
+                                try {
+                                    String hex = str.substring(i + 2, i + 6);
+                                    int code = Integer.parseInt(hex, 16);
+                                    sb.append((char) code);
+                                    i += 6;
+                                } catch (Exception e) {
+                                    sb.append(c);
+                                    i++;
+                                }
+                            } else {
+                                sb.append(c);
+                                i++;
+                            }
+                            break;
+                        case 'b': // \b = 0x08
+                            sb.append((char) 0x08);
+                            i += 2;
+                            break;
+                        case 't': // \t = 0x09
+                            sb.append((char) 0x09);
+                            i += 2;
+                            break;
+                        case 'n': // \n = 0x0a
+                            sb.append((char) 0x0a);
+                            i += 2;
+                            break;
+                        case 'r': // \r = 0x0d
+                            sb.append((char) 0x0d);
+                            i += 2;
+                            break;
+                        case 'f': // \f = 0x0c
+                            sb.append((char) 0x0c);
+                            i += 2;
+                            break;
+                        case '"': // \" = 0x22
+                            sb.append((char) 0x22);
+                            i += 2;
+                            break;
+                        case '\\': // \\ = 0x5c
+                            sb.append((char) 0x5c);
+                            i += 2;
+                            break;
+                        default:
+                            sb.append(c);
+                            i++;
+                            break;
+                    }
+                } else {
+                    sb.append(c);
+                    i++;
+                }
+            } else {
+                sb.append(c);
+                i++;
+            }
+        }
+        
+        return sb.toString();
+    }
 }
