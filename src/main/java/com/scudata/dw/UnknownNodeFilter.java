@@ -3,6 +3,7 @@ package com.scudata.dw;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.scudata.common.RQException;
 import com.scudata.dm.Context;
 import com.scudata.dm.Param;
 import com.scudata.expression.Expression;
@@ -71,7 +72,8 @@ public class UnknownNodeFilter extends IFilter {
 			if (node instanceof FieldRef) {
 				return;
 			} else {
-				node.getUsedFields(ctx, resultList);
+				throw new RQException();
+				//node.getUsedFields(ctx, resultList);
 			}
 		}
 		
@@ -79,7 +81,11 @@ public class UnknownNodeFilter extends IFilter {
 	
 	private void init(ColPhyTable table, Node node, Expression[] exps, String[] names, Context ctx) {
 		List<String> resultList = new ArrayList<String>();
-		getUsedFields(node, ctx, resultList);
+		try {
+			getUsedFields(node, ctx, resultList);
+		} catch (Exception e) {
+			resultList.clear();
+		}
 		int size = resultList.size();
 		if (size > 0) {
 			List<ColumnMetaData> columns = new ArrayList<ColumnMetaData>(size);
